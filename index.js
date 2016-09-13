@@ -269,17 +269,18 @@ module.exports = function (options) {
 
 
                 var highWaterMark = stream.highWaterMark||(16*1000);
-                var size = file.stat.size;
-
-
+                
                 file.pipe(stream); // start upload
+                if (file.stat && file.stat.size) {
+                    var size = file.stat.size;
 
-                stream.on('drain',function(){
-                    uploadedBytes+=highWaterMark;
-                    var p = Math.round((uploadedBytes/size)*100);
-                    p = Math.min(100,p);
-                    gutil.log('gulp-sftp:',finalRemotePath,"uploaded",(uploadedBytes/1000)+"kb");
-                });
+                    stream.on('drain',function(){
+                        uploadedBytes+=highWaterMark;
+                        var p = Math.round((uploadedBytes/size)*100);
+                        p = Math.min(100,p);
+                        gutil.log('gulp-sftp:',finalRemotePath,"uploaded",(uploadedBytes/1000)+"kb");
+                    });
+                }
 
 
 
